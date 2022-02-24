@@ -194,19 +194,23 @@ class button2P:
 		self.width = 150
 		self.height = 75
 		self.col = (255, 255, 255)
+		self.bcol = (0, 255, 0)
 		self.buttonText = pygame.font.SysFont('Impact', 30)
+		self.b = -1
 
 	def draw(self, string, x, y, xText, yText):
 		self.rect = Rect(x, y, self.width, self.height)
 		self.textSurface = self.buttonText.render(str(string), True, (0, 0, 0))
 		pygame.draw.rect(screen, self.col, self.rect)
+		pygame.draw.rect(screen, self.bcol, self.rect, self.b)
 		screen.blit(self.textSurface, (x + xText, y + yText))
 
-		if (pygame.mouse.get_pos()[0] > x and pygame.mouse.get_pos()[1] > y
-			and pygame.mouse.get_pos()[0] < (x + self.width) 
-			and pygame.mouse.get_pos()[1] < (y + self.height)):
-			if pygame.mouse.get_pressed() == (1, 0, 0):
-				print(str(string))
+		if pygame.mouse.get_pressed() == (1, 0, 0):
+			if (pygame.mouse.get_pos()[0] > x and pygame.mouse.get_pos()[1] > y
+				and pygame.mouse.get_pos()[0] < (x + self.width) 
+				and pygame.mouse.get_pos()[1] < (y + self.height)):
+				if str(string) == "1P":
+					self.b = 4
 		
 
 def gameText(string, x, y):
