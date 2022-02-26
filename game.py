@@ -2,17 +2,19 @@ import pygame
 from pygame import Vector2
 from pygame import mixer
 from pygame.locals import *
+from tkinter import *
+from tkinter.ttk import *
 import os
 
 s_w = 600
 s_h = 600
 screen_size = Vector2(600, 600)
 
-menu = True
-run = True
+global menu
+menu = False
+run = False
 game = True
 
-screen = pygame.display.set_mode(screen_size)
 
 background = (0, 0, 0)
 
@@ -172,52 +174,114 @@ class obscl:
 	def reset(self):
 		self.__init__()
 
-class button1P:
+class button:
 	def __init__(self):
 		self.width = 150
 		self.height = 75
 		self.col = (255, 255, 255)
-		self.buttonText = pygame.font.SysFont('Impact', 30)
-
-	def draw(self, string, x, y, xText, yText):
-		self.rect = Rect(x, y, self.width, self.height)
-		self.textSurface = self.buttonText.render(str(string), True, (0, 0, 0))
-		pygame.draw.rect(screen, self.col, self.rect)
-		screen.blit(self.textSurface, (x + xText, y + yText))
-
-		if pygame.mouse.get_pos() > (x, y) and pygame.mouse.get_pos() < (x + self.width, y + self.height):
-			if pygame.mouse.get_pressed() == (1, 0, 0):
-				print(str(string))
-
-class button2P:
-	def __init__(self):
-		self.width = 150
-		self.height = 75
-		self.col = (255, 255, 255)
+		self.hcol = (220, 220, 220)
 		self.bcol = (0, 255, 0)
 		self.buttonText = pygame.font.SysFont('Impact', 30)
-		self.b = -1
+		self.pressed = False
+		global p1b
+		global p2b
+		p1b = -1
+		p2b = -1
 
-	def draw(self, string, x, y, xText, yText):
-		self.rect = Rect(x, y, self.width, self.height)
+	def draw1P(self, string):
+		global p1b
+		global p2b
+		self.rect = Rect(210, 100, self.width, self.height)
 		self.textSurface = self.buttonText.render(str(string), True, (0, 0, 0))
 		pygame.draw.rect(screen, self.col, self.rect)
-		pygame.draw.rect(screen, self.bcol, self.rect, self.b)
-		screen.blit(self.textSurface, (x + xText, y + yText))
+		pygame.draw.rect(screen, self.bcol, self.rect, p1b)
+		screen.blit(self.textSurface, (210 + 60, 100 + 20))
 
 		if pygame.mouse.get_pressed() == (1, 0, 0):
-			if (pygame.mouse.get_pos()[0] > x and pygame.mouse.get_pos()[1] > y
-				and pygame.mouse.get_pos()[0] < (x + self.width) 
-				and pygame.mouse.get_pos()[1] < (y + self.height)):
+			if (pygame.mouse.get_pos()[0] > 200 and pygame.mouse.get_pos()[1] > 100
+				and pygame.mouse.get_pos()[0] < (200 + self.width) 
+				and pygame.mouse.get_pos()[1] < (100 + self.height)):
 				if str(string) == "1P":
-					self.b = 4
-		
+					if p1b == -1:
+						p1b = 4
+					elif p1b == 4:
+						p1b = -1
+					if p2b != -1:
+						p2b = -1
+					pygame.time.delay(100)
+
+		if p1b == 4:
+			return True
+		elif p1b == -1:
+			return False
+
+	def draw2P(self, string):
+		global p1b
+		global p2b
+		self.rect = Rect(210, 200, self.width, self.height)
+		self.textSurface = self.buttonText.render(str(string), True, (0, 0, 0))
+		pygame.draw.rect(screen, self.col, self.rect)
+		pygame.draw.rect(screen, self.bcol, self.rect, p2b)
+		screen.blit(self.textSurface, (210 + 60, 200 + 20))
+
+		if (pygame.mouse.get_pos()[0] > 200 and pygame.mouse.get_pos()[1] > 200
+				and pygame.mouse.get_pos()[0] < (200 + self.width) 
+				and pygame.mouse.get_pos()[1] < (200 + self.height)):
+			self.col = (220, 220, 220)
+		else: self.col = (255, 255, 255)	
+
+		if pygame.mouse.get_pressed() == (1, 0, 0):
+			if (pygame.mouse.get_pos()[0] > 200 and pygame.mouse.get_pos()[1] > 200
+				and pygame.mouse.get_pos()[0] < (200 + self.width) 
+				and pygame.mouse.get_pos()[1] < (200 + self.height)):
+				if str(string) == "2P":
+					if p2b == -1:
+						p2b = 4
+					elif p2b == 4:
+						p2b = -1
+					if p1b != -1:
+						p1b = -1
+					pygame.time.delay(100)
+		if p2b == 4:
+			return True
+		elif p2b == -1:
+			return False
+
+	def drawContinue(self, string):
+		global menu
+		self.rect = Rect(200, 500, self.width + 20, self.height)
+		self.textSurface = self.buttonText.render(str(string), True, (0, 0, 0))
+		pygame.draw.rect(screen, self.col, self.rect)
+		#pygame.draw.rect(screen, self.bcol, self.rect, p2b)
+		screen.blit(self.textSurface, (200 + 30, 500 + 20))
+
+		if pygame.mouse.get_pressed() == (1, 0, 0):
+			if (pygame.mouse.get_pos()[0] > 200 and pygame.mouse.get_pos()[1] > 500
+				and pygame.mouse.get_pos()[0] < (200 + self.width) 
+				and pygame.mouse.get_pos()[1] < (500 + self.height)):
+				if str(string) == "Continue":
+					print("hey")
+					menu = False
+					self.pressed = True
+		return self.pressed
+
+class buttonState:
+	def __init__(self):
+		self.twoP = False
+
+	def cont(self):
+		global menu
+		menu = True
+
+
+	def twoPlayer(self):
+		self.twoP = True
+
 
 def gameText(string, x, y):
     texting = pygame.font.SysFont('Impact', 40)
     textsurface = texting.render(str(string), True, (255, 255, 255))
     screen.blit(textsurface, (x, y))
-
 
 ball = ball()
 
@@ -226,20 +290,37 @@ player2 = p2()
 
 obstacle = obscl()
 
-btn1P = button1P()
-btn2P = button2P()
+btn = buttonState()
 
 clock = pygame.time.Clock()
+
+root = Tk()
+root.geometry('400x400+450+250')
+#root.eval('tk::PlaceWindow . center')
+
+style = Style()
+style.configure('W.TButton', font = ('calibri', 20))
+
+btn1 = Button(root, text = '1 Player', style = 'W.TButton', command = None)
+btn1.grid(row = 0, column = 0, padx = 25, pady = 50)
+
+btn2 = Button(root, text = '2 Player', style = 'W.TButton', command = btn.twoPlayer())
+btn2.grid(row = 0, column = 2)
+
+btn3 = Button(root,text = 'Continue', style = 'W.TButton', command = btn.cont())
+btn3.grid(row = 1, column = 0, columnspan = 3)
+
+root.mainloop()
+
+#screen = pygame.display.set_mode(screen_size)
 
 while menu == True:
 	clock.tick(75)
 	screen.fill(background)
 
-	#btn1P.draw("1P", 200, 100, 60, 20)
-	btn2P.draw("1P", 200, 100, 60, 20)
-	btn2P.draw("2P", 200, 200, 60, 20)
-
-
+	btn.draw1P("1P")
+	btn.draw2P("2P")
+	btn.drawContinue("Continue")
 
 	for event in pygame.event.get():
 		if event.type == pygame.QUIT:
